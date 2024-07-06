@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros Salvos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Registros Salvos</h1>
+        <div id="registros">
+            <!-- Registros serão inseridos aqui dinamicamente -->
+        </div>
+        <button type="button" id="btnVoltar">Voltar</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registros = JSON.parse(sessionStorage.getItem('registrosPorData'));
+            const registrosContainer = document.getElementById('registros');
+
+            if (registros && registros.length > 0) {
+                registros.forEach(registro => {
+                    const divRegistro = document.createElement('div');
+                    divRegistro.classList.add('registro');
+                    divRegistro.innerHTML = `
+                        <h2>Data: ${registro.data}</h2>
+                        <div class="sessoes">
+                            <h3>Sessões de Jogos</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>TV</th>
+                                        <th>Hora Inicial</th>
+                                        <th>Hora Final</th>
+                                        <th>Valor</th>
+                                        <th>Observação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${registro.sessoes.map(sessao => `
+                                        <tr>
+                                            <td>${sessao.tv}</td>
+                                            <td>${sessao.horaInicial}</td>
+                                            <td>${sessao.horaFinal}</td>
+                                            <td>${sessao.valor.toFixed(2)}</td>
+                                            <td>${sessao.observacao}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="compras">
+                            <h3>Compras</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome do Cliente</th>
+                                        <th>Item</th>
+                                        <th>Quantidade</th>
+                                        <th>Valor Total (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${registro.compras.map(compra => `
+                                        <tr>
+                                            <td>${compra.nomeCliente}</td>
+                                            <td>${compra.item}</td>
+                                            <td>${compra.quantidade}</td>
+                                            <td>${(compra.quantidade * calcularValorItem(compra.item)).toFixed(2)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="botoes">
+                            <button type="button" class="btnExcluir" data-index="${registro.data}">Excluir</button>
+                            <button type="button" class="btnSomar" data-index="${registro.data}">Somar Total</button>
+                            <button type="button" class="btn10Porcento" data-index="${registro.data}">Calcular 10%</button>
+                        </div>
+                    `;
+                    registrosContainer.appendChild(divRegistro);
+                });
+            } else {
+                registrosContainer.innerHTML = '<p>Nenhum registro encontrado.</p>';
+            }
+
+            // Voltar para a página principal
+            const btnVoltar = document.getElementById('btnVoltar');
+            btnVoltar.addEventListener('click', function () {
+                window.location.href = 'index.html';
+            });
+
+            // Event listener para o botão Excluir
+            const btnExcluir = document.querySelectorAll('.btnExcluir');
+            btnExcluir.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const dataExcluir = btn.getAttribute('data-index');
+                    excluirRegistros(dataExcluir);
+                });
+            });
+
+            // Event listener para o botão Somar Total
+            const btnSomar = document.querySelectorAll('.btnSomar');
+            btnSomar.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const dataSomar = btn.getAttribute('data-index');
+                    const totalSessoes = calcularTotalSessoes(dataSomar);
+                    const totalCompras = calcularTotalCompras(dataSomar);
+                    const totalGeral = totalSessoes + totalCompras;
+                    alert(`Total de Sessões: R$ ${totalSessoes.toFixed(2)}\nTotal de Compras: R$ ${totalCompras.toFixed(2)}\nTotal Geral: R$ ${totalGeral.toFixed(2)}`);
+                });
+            });
+
+            // Event listener para o botão Calcular 10%
+            const btn10Porcento = document.querySelectorAll('.btn10Porcento');
+            btn10Porcento.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const dataCalcular = btn.getAttribute('data-index');
+                    const totalSessoes = calcularTotalSessoes(dataCalcular);
+                    const totalCompras = calcularTotalCompras(dataCalcular);
+                    const totalGeral = totalSessoes + totalCompras;
+                    const dezPorcento = totalGeral * 0.1;
+                    alert(`10% do Valor Total: R$ ${dezPorcento.toFixed(2)}`);
+                });
+            });
+
+            // Função para calcular o total de sessões
+            function calcularTotalSessoes(data) {
+                const registros = JSON.parse(sessionStorage.getItem('registrosPorData'));
+                const registro = registros.find(registro => registro.data === data);
+
+                if (registro) {
+                    const total = registro.sessoes.reduce((acc, sessao) => acc + sessao.valor, 0);
+                    return total;
+                }
+
+                return 0;
+            }
+
+            // Função para calcular o total de compras
+            function calcularTotalCompras(data) {
+                const registros = JSON.parse(sessionStorage.getItem('registrosPorData'));
+                const registro = registros.find(registro => registro.data === data);
+
+                if (registro) {
+                    const total = registro.compras.reduce((acc, compra) => {
+                        return acc + (compra.quantidade * calcularValorItem(compra.item));
+                    }, 0);
+                    return total;
+                }
+
+                return 0;
+            }
+
+            // Função para calcular o valor do item
+            function calcularValorItem(item) {
+                switch (item) {
+                    case 'xilito':
+                    case 'pipoca':
+                        return 1.00;
+                    case 'cheetos':
+                    case 'cebolitos':
+                    case 'bacon':
+                    case 'Fini':
+                        return 1.50;
+                    case 'bombom':
+                        return 0.15;
+                    case 'Megalito':
+                    case 'Estrela':
+                        return 0.50;
+                    case 'nucita':
+                        return 0.35;
+                    case 'plutonita':
+                        return 0.25;
+                    default:
+                        return 0;
+                }
+            }
+
+            // Função para excluir registros
+            function excluirRegistros(dataExcluir) {
+                let registros = JSON.parse(sessionStorage.getItem('registrosPorData'));
+
+                // Filtrar registros exceto o que será excluído
+                registros = registros.filter(registro => registro.data !== dataExcluir);
+
+                // Atualizar a sessionStorage
+                sessionStorage.setItem('registrosPorData', JSON.stringify(registros));
+
+                // Recarregar a página para exibir os registros atualizados
+                location.reload();
+            }
+        });
+    </script>
+</body>
+</html>

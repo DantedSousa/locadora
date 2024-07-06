@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locadora Geek&Games</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Locadora Geek&Games</h1>
+
+        <!-- Pergunta pelo dia -->
+        <section class="section" id="sectionDia">
+            <h2>Dia de Hoje</h2>
+            <form id="formDia">
+                <label for="inputDia">Informe o dia de hoje:</label>
+                <input type="date" id="inputDia" required>
+                <button type="submit" id="btnConfirmarDia">Confirmar</button>
+            </form>
+        </section>
+
+        <!-- Página principal de registros -->
+        <section class="section" id="sectionPrincipal" style="display: none;">
+
+            <!-- Formulário para registrar sessões de jogos -->
+            <section class="section">
+                <h3>Sessão de Jogos</h3>
+                <form id="formSessoes">
+                    <label for="tv">TV:</label>
+                    <select id="tv" required>
+                        <option value="TV1">TV 1</option>
+                        <option value="TV2">TV 2</option>
+                        <option value="TV3">TV 3</option>
+                        <option value="TV4">TV 4</option>
+                        <!-- Adicione mais TVs conforme necessário -->
+                    </select>
+                    <label for="horaInicial">Hora Inicial:</label>
+                    <input type="time" id="horaInicial" required>
+                    <label for="horaFinal">Hora Final:</label>
+                    <input type="time" id="horaFinal" required>
+                    <label for="valor">Valor (R$):</label>
+                    <input type="number" id="valor" step="0.01" required>
+                    <label for="observacao">Observação:</label>
+                    <input type="text" id="observacao">
+                    <button type="button" id="btnAddSessao">Adicionar</button>
+                </form>
+                <table id="tableSessoes">
+                    <thead>
+                        <tr>
+                            <th>TV</th>
+                            <th>Hora Inicial</th>
+                            <th>Hora Final</th>
+                            <th>Valor</th>
+                            <th>Observação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas de sessões serão inseridas aqui -->
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Formulário para registrar compras -->
+            <section class="section">
+                <h3>Compras</h3>
+                <form id="formCompras">
+                    <label for="nomeCliente">Nome do Cliente:</label>
+                    <input type="text" id="nomeCliente" required>
+                    <label for="item">Item:</label>
+                    <select id="item">
+                        <option value="xilito">Xilito</option>
+                        <option value="pipoca">Pipoca</option>
+                        <option value="cheetos">Cheetos</option>
+                        <option value="cebolitos">Cebolitos</option>
+                        <option value="bacon">Bacon</option>
+                        <option value="bombom">Bombom</option>
+                        <option value="Fini">Fini</option>
+                        <option value="Megalito">Megalito</option>
+                        <option value="Estrela">Estrela</option>
+                        <option value="nucita">Nucita</option>
+                        <option value="plutonita">Plutonita</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                    <input type="text" id="outroItem" style="display: none;" placeholder="Digite o item">
+                    <label for="quantidade">Quantidade:</label>
+                    <input type="number" id="quantidade" min="1" required>
+                    <button type="button" id="btnAddCompra">Adicionar</button>
+                </form>
+                <table id="tableCompras">
+                    <thead>
+                        <tr>
+                            <th>Nome do Cliente</th>
+                            <th>Item</th>
+                            <th>Quantidade</th>
+                            <th>Valor Total (R$)</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Linhas de compras serão inseridas aqui -->
+                    </tbody>
+                    <tfoot>
+                        <tr id="itemPersonalizadoRow" style="display: none;">
+                            <td><input type="text" id="itemPersonalizado"></td>
+                            <td><button type="button" id="btnAddPersonalizado">Adicionar</button></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </section>
+
+            <!-- Seção para cálculo dos totais -->
+            <section class="section">
+                <h3>Total</h3>
+                <div id="totalSessoes">
+                    <strong>Total Sessões de Jogos:</strong> R$ <span id="valorTotalSessoes">0.00</span>
+                </div>
+                <div id="totalCompras">
+                    <strong>Total Compras:</strong> R$ <span id="valorTotalCompras">0.00</span>
+                </div>
+                <div id="totalGeral">
+                    <strong>Total Geral:</strong> R$ <span id="valorTotalGeral">0.00</span>
+                </div>
+            </section>
+
+            <!-- Botões para limpar registros e acessar aba de registros -->
+            <div class="botoes">
+                <button type="button" id="btnLimpar">Limpar Registros do Dia</button>
+                <button type="button" id="btnAcessarRegistros">Acessar Registros</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
